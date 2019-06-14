@@ -25,6 +25,8 @@ MainWindow::MainWindow(QWidget *parent) :
             centerChanged);
     connect(ui->cy, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
             centerChanged);
+    connect(ui->type, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+            ui->drawWidget, &XYRotateText::setType);
 
     connect(ui->text, &QLineEdit::textChanged,
             ui->drawWidget, &XYRotateText::setText);
@@ -34,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->angle->valueChanged(ui->angle->value());
     ui->cx->valueChanged(ui->cx->value());
     ui->cy->valueChanged(ui->cy->value());
+    ui->type->currentIndexChanged(0);
 
     timer.setSingleShot(false);
     connect(&timer, &QTimer::timeout, [this](){

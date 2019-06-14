@@ -7,6 +7,7 @@ class XYRotateText : public QWidget
 {
     Q_OBJECT
 public:
+    enum Type{RotateIsSame, RotateIsDifferent};
     explicit XYRotateText(QWidget *parent = 0);
 
     void setText(const QString &value);
@@ -16,6 +17,7 @@ public:
     void setRadius(qreal value);
     inline qreal rotateAngle() {return mRotateAngle; }
     void setRotateAngle(qreal value);
+    void setType(int value);
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -25,6 +27,7 @@ private:
     void updateImage();
 
 private:
+    Type     mType;
     QPixmap  mTextPixmap;
     QPoint   mCenterPoint;
     QString  mText;

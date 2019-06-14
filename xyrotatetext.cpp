@@ -7,6 +7,7 @@ XYRotateText::XYRotateText(QWidget *parent)
     : QWidget(parent)
 {
     mRotate = mStartAngle = mRotateAngle = 0;
+    mType = static_cast<Type>(-1);
     mRadius = 10;
 }
 
@@ -46,9 +47,16 @@ void XYRotateText::setRotateAngle(qreal value)
     update();
 }
 
+void XYRotateText::setType(int value)
+{
+    mType = static_cast<Type>(value);
+    updateImage();
+}
+
 void XYRotateText::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
+    painter.setRenderHints(QPainter::SmoothPixmapTransform | QPainter::TextAntialiasing);
     QTransform form;
     form.translate(mCenterPoint.x(), mCenterPoint.y());
     form.rotate(mRotateAngle);
@@ -96,19 +104,45 @@ void XYRotateText::updateImage()
     QPainter painter(&mTextPixmap);
     painter.setRenderHints(QPainter::TextAntialiasing);
 
-    QTransform form;
-    form.translate(mRadius, mRadius);
-    QFontMetrics me(painter.font());
-    QPainterPath path;
-    path.addEllipse(mTextPixmap.rect().adjusted(me.height(), me.height(),
-                                                -me.height(), -me.height()));
-    QPointF start = path.pointAtPercent((int(mStartAngle) % 360) / 360.0);
-    start -= QPoint(mRadius, mRadius);
-    for (int i = 0; i < mText.size(); ++i)
+    switch (mType)
     {
-        form.rotate(mRotate);
-        painter.setTransform(form);
-        painter.drawText(start, mText.at(i));
+    case RotateIsSame:
+        for (int i = 0; i < mText.size(); ++i)
+        {
+            QTransform form;
+            form.translate(mRadius, mRadius);
+            QFontMetrics me(painter.font());
+            auto rotate = mStartAngle + mRotate * i;
+            form.rotate(rotate);
+            painter.setTransform(form);
+            QPoint start(0, - (mRadius - me.height()));
+            form.translate(start.x(), start.y());
+            form.rotate(-rotate);
+            painter.setTransform(form);
+            painter.drawText(0, 0, mText.at(i));
+        }
+        break;
+    case RotateIsDifferent:
+        {
+            QTransform form;
+            form.translate(mRadius, mRadius);
+            QFontMetrics me(painter.font());
+            QPainterPath path;
+            path.addEllipse(mTextPixmap.rect().adjusted(me.height(), me.height(),
+                                                        -me.height(), -me.height()));
+            QPointF start = path.pointAtPercent((int(mStartAngle) % 360) / 360.0);
+            start -= QPoint(mRadius, mRadius);
+            for (int i = 0; i < mText.size(); ++i)
+            {
+                form.rotate(mRotate);
+                painter.setTransform(form);
+                painter.drawText(start, mText.at(i));
+            }
+        }
+        break;
+    default:
+        painter.drawText(mTextPixmap.rect(), QStringLiteral("绘制类型未定义！"), QTextOption(Qt::AlignCenter));
+        break;
     }
 
     update();

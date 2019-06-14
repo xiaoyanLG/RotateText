@@ -105,6 +105,20 @@
        </spacer>
       </item>
       <item>
+       <widget class="QComboBox" name="type">
+        <item>
+         <property name="text">
+          <string>文字角度相同</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>文字不同角度旋转</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
        <widget class="QLabel" name="label_6">
         <property name="text">
          <string>间隔：</string>
