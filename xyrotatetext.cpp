@@ -1,6 +1,7 @@
 ﻿#include "xyrotatetext.h"
 #include <QPainter>
 #include <QMouseEvent>
+#include <qmath.h>
 #include <QDebug>
 
 XYRotateText::XYRotateText(QWidget *parent)
@@ -53,10 +54,10 @@ void XYRotateText::setType(int value)
     updateImage();
 }
 
-void XYRotateText::paintEvent(QPaintEvent *event)
+void XYRotateText::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
-    painter.setRenderHints(QPainter::SmoothPixmapTransform | QPainter::TextAntialiasing);
+    painter.setRenderHints(QPainter::SmoothPixmapTransform);
     QTransform form;
     form.translate(mCenterPoint.x(), mCenterPoint.y());
     form.rotate(mRotateAngle);
